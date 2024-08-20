@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13.6-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # AMQP port
+      - "15672:15672" # Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: stockmarket
+      RABBITMQ_DEFAULT_PASS: supersecret123
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics ping" ] # Check if RabbitMQ is running
+      interval: 30s # Check every 30 seconds
+      timeout: 10s # Timeout after 10 seconds
+      retries: 3 # Retry 3 times before giving up
+      start_period: 10s # Start checking after 10 seconds
+
+  stock-publisher:
+    build:
+      context: ./stock-publisher
+    environment:
+      RABBITMQ_URL: amqp://stockmarket:supersecret123@rabbitmq:5672/
+    depends_on:
+      rabbitmq:
+        condition: service_healthy # Wait for RabbitMQ to be healthy
