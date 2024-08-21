@@ -1,21 +1,19 @@
-version: '3.8'
-
 services:
   rabbitmq:
     image: rabbitmq:3.13.6-management
     container_name: rabbitmq
     ports:
-      - "5672:5672" # AMQP port
-      - "15672:15672" # Management UI port
+      - "5672:5672" 
+      - "15672:15672" 
     environment:
       RABBITMQ_DEFAULT_USER: stockmarket
       RABBITMQ_DEFAULT_PASS: supersecret123
     healthcheck:
-      test: [ "CMD-SHELL", "rabbitmq-diagnostics ping" ] # Check if RabbitMQ is running
-      interval: 30s # Check every 30 seconds
-      timeout: 10s # Timeout after 10 seconds
-      retries: 3 # Retry 3 times before giving up
-      start_period: 5s # Start checking after 10 seconds
+      test: ["CMD-SHELL", "rabbitmq-diagnostics ping"] 
+      interval: 30s 
+      timeout: 10s 
+      retries: 3
+      start_period: 5s 
 
   stock-publisher:
     build:
@@ -24,18 +22,63 @@ services:
       RABBITMQ_URL: amqp://stockmarket:supersecret123@rabbitmq:5672/
     depends_on:
       rabbitmq:
-        condition: service_healthy # Wait for RabbitMQ to be healthy
+        condition: service_healthy 
 
-  mongo:
+  mongo1:
     image: mongo:5.0
-    container_name: mongodb
+    container_name: mongo1
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_REPLICA_SET_NAME: "rs0"
+    command: "--replSet rs0 --bind_ip localhost,mongo1 --keyFile /data/configdb/mongo-keyfile"
+    volumes:
+      - mongo1_data:/data/db
+      - ./mongo-keyfile:/data/configdb/mongo-keyfile:ro
     healthcheck:
-      test: [ "CMD-SHELL", "mongo --eval 'db.adminCommand(\"ping\")' || exit 1" ]
+      test: ["CMD-SHELL", "mongo --eval 'db.adminCommand(\"ping\")' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+  mongo2:
+    image: mongo:5.0
+    container_name: mongo2
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_REPLICA_SET_NAME: "rs0"
+    command: "--replSet rs0 --bind_ip localhost,mongo2 --keyFile /data/configdb/mongo-keyfile"
+    volumes:
+      - mongo2_data:/data/db
+      - ./mongo-keyfile:/data/configdb/mongo-keyfile:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mongo --eval 'db.adminCommand(\"ping\")' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+  mongo3:
+    image: mongo:5.0
+    container_name: mongo3
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_REPLICA_SET_NAME: "rs0"
+    command: "--replSet rs0 --bind_ip localhost,mongo3 --keyFile /data/configdb/mongo-keyfile"
+    volumes:
+      - mongo3_data:/data/db
+      - ./mongo-keyfile:/data/configdb/mongo-keyfile:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mongo --eval 'db.adminCommand(\"ping\")' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -46,10 +89,19 @@ services:
       context: ./stock-consumer
     environment:
       RABBITMQ_URL: amqp://stockmarket:supersecret123@rabbitmq:5672/
-      MONGODB_URL: mongodb://localhost:27017/
+      MONGODB_URL: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0
       QUEUE_NAME: stock_queue
     depends_on:
       rabbitmq:
         condition: service_healthy
-      mongo:
+      mongo1:
         condition: service_healthy
+      mongo2:
+        condition: service_healthy
+      mongo3:
+        condition: service_healthy
+
+volumes:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
