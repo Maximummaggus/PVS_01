@@ -89,3 +89,4 @@ volumes:
   mongo2_config:
   mongo3_data:
   mongo3_config:
+#Mongo 2+3 funktionieren leider noch nicht
