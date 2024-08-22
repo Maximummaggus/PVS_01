@@ -40,6 +40,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+      start_period: 30s
 
   mongo2:
     image: mongo:7.0
@@ -52,6 +53,12 @@ services:
       - "mongo2_config:/data/configdb"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "echo \"rs.status()\" | mongosh --port 27018 --quiet"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   mongo3:
     image: mongo:7.0
@@ -64,6 +71,12 @@ services:
       - "mongo3_config:/data/configdb"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "echo \"rs.status()\" | mongosh --port 27019 --quiet"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   stock-consumer:
     build:
@@ -89,4 +102,3 @@ volumes:
   mongo2_config:
   mongo3_data:
   mongo3_config:
-#Mongo 2+3 funktionieren leider noch nicht
