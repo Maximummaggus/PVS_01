@@ -31,8 +31,8 @@ services:
       - "27017:27017"
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     volumes:
-      - "mongo1_data:/data/db"
-      - "mongo1_config:/data/configdb"
+      - mongo1_data:/data/db
+      - mongo1_config:/data/configdb
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -49,8 +49,8 @@ services:
       - "27018:27018"
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
     volumes:
-      - "mongo2_data:/data/db"
-      - "mongo2_config:/data/configdb"
+      - mongo2_data:/data/db
+      - mongo2_config:/data/configdb
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -67,8 +67,8 @@ services:
       - "27019:27019"
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
     volumes:
-      - "mongo3_data:/data/db"
-      - "mongo3_config:/data/configdb"
+      - mongo3_data:/data/db
+      - mongo3_config:/data/configdb
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -88,6 +88,21 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      mongo1:
+        condition: service_healthy
+      mongo2:
+        condition: service_healthy
+      mongo3:
+        condition: service_healthy
+
+  stock-liveview:
+    build:
+      context: ./stock-liveview
+    ports:
+      - "3000:3000"
+    environment:
+      MONGODB_URL: mongodb://mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=rs0
+    depends_on:
       mongo1:
         condition: service_healthy
       mongo2:
