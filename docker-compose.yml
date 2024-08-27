@@ -95,6 +95,7 @@ services:
         condition: service_healthy
       mongo3:
         condition: service_healthy
+    restart: always # Restart policy
 
   stock-consumer-msft:
     build:
@@ -112,6 +113,7 @@ services:
         condition: service_healthy
       mongo3:
         condition: service_healthy
+    restart: always # Restart policy   
 
   stock-consumer-tsla:
     build:
@@ -129,6 +131,7 @@ services:
         condition: service_healthy
       mongo3:
         condition: service_healthy
+    restart: always # Restart policy
 
   stock-liveview1:
     build:
