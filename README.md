@@ -13,6 +13,8 @@ eine Ausfallsicherheit gewährleistet werden kann. Weiter sollen die aggregierte
 einsehbar sein welches auch als Source Code zur Verfügung gestellt wird und in einen Docker Container verpackt werden
 soll. Auch das Frontend soll ausfallsicher gestaltet werden und soll daher aus mindestens 2 Instanzen bestehen mit einem
 Load Balancer, der die Anfragen auf die Systeme verteilt.
+![image](https://github.com/user-attachments/assets/f703f78c-9b1d-4e99-8c7a-d5bfc3f9485f)
+
 
 Wichtig:
 vor dem Ausführen alle Container, Images und Volumes im Docker Desktop löschen
