@@ -1,7 +1,7 @@
 TEKO Olten: Parallele und verteilte Systeme
 Leistungsbeurteilung PVS-01
 
-Diese Arbeti umfasst folgenden Auftrag:
+Diese Arbeit umfasst folgenden Auftrag:
 Entwickeln Sie ein verteiltes Finanzsystem welches fiktive Finanzdaten verarbeitet und diese entsprechend abspeichert.
 Der Producer welcher synthetische Finanzdaten erzeugt ist als Source Code vorhanden und muss in einen Docker
 Container verpackt werden. Weiter sendet er die Daten in ein Message Broker System «RabbitMQ» in verschiedene
