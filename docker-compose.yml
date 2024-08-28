@@ -26,7 +26,7 @@ services:
     restart: always # Restart policy
 
   mongo1:
-    image: mongo:5.0
+    image: mongo:7.0
     container_name: mongo1
     ports:
       - "27017:27017"
@@ -44,7 +44,7 @@ services:
       start_period: 30s
 
   mongo2:
-    image: mongo:5.0
+    image: mongo:7.0
     container_name: mongo2
     ports:
       - "27018:27018"
@@ -62,7 +62,7 @@ services:
       start_period: 30s
 
   mongo3:
-    image: mongo:5.0
+    image: mongo:7.0
     container_name: mongo3
     ports:
       - "27019:27019"
